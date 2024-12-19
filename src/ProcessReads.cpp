@@ -98,9 +98,13 @@ void doStrandSpecificity(Roaring& u, const ProgramOptions::StrandType strand, co
     u &= ec; // intersection
     for (auto tr : u) { // strand-specific filtering to produce subset of u: vtmp
       char sense = v_ec[tr];
-      if ((um.strand == (bool)sense) == firstStrand || sense == 2) vtmp.add(tr);
+      if ((um.strand == (bool)sense) == firstStrand || sense == 2) {
+        vtmp.add(tr);
+      }
     }
-    if (vtmp.cardinality() < u.cardinality()) u = std::move(vtmp);
+    if (vtmp.cardinality() < u.cardinality()) {
+      u = std::move(vtmp);
+    }
   }
   if (!v2.empty()) {
     vtmp = Roaring();
@@ -117,9 +121,13 @@ void doStrandSpecificity(Roaring& u, const ProgramOptions::StrandType strand, co
     u &= ec; // intersection
     for (auto tr : u) { // strand-specific filtering to produce subset of u: vtmp
       char sense = v_ec[tr];
-      if ((um.strand == (bool)sense) == secondStrand || sense == 2) vtmp.add(tr);
+      if ((um.strand == (bool)sense) == secondStrand || sense == 2) { 
+        vtmp.add(tr);
+      }
     }
-    if (vtmp.cardinality() < u.cardinality()) u = std::move(vtmp);
+    if (vtmp.cardinality() < u.cardinality()) {
+      u = std::move(vtmp);
+    }
   }
 }
 
@@ -598,8 +606,12 @@ void MasterProcessor::update(const std::vector<uint32_t>& c, const std::vector<R
       int new_mapped_newBP_num = new_mapped_num - new_mapped_bv_num;
       n = new_n;
       
-      if (new_mapped_bv_num < bv_size) bv.resize(new_mapped_bv_num);
-      if (new_mapped_newBP_num < newBP_size) newBP.resize(new_mapped_newBP_num);
+      if (new_mapped_bv_num < bv_size) {
+        bv.resize(new_mapped_bv_num);
+      }
+      if (new_mapped_newBP_num < newBP_size) { 
+        newBP.resize(new_mapped_newBP_num);
+      }
     }
 
     // add new equiv classes to extra format
@@ -898,7 +910,9 @@ ReadProcessor::ReadProcessor(const KmerIndex& index, const ProgramOptions& opt, 
 
    seqs.reserve(bufsize/50);
    newEcs.reserve(1000);
-   if (opt.unmapped) unmapped_list.reserve(seqs.size()); 
+   if (opt.unmapped) {
+     unmapped_list.reserve(seqs.size()); 
+   }
    counts.reserve((int) (tc.counts.size() * 1.25));
    clear();
 }
@@ -1176,9 +1190,13 @@ void ReadProcessor::processBuffer() {
 
 	    if (mp.opt.strand_specific && !u.isEmpty()) {
 	      bool comprehensive = false;
-	      if (mp.opt.do_union || mp.opt.no_jump) comprehensive = true;
+	      if (mp.opt.do_union || mp.opt.no_jump) {
+          comprehensive = true;
+        }
 	      // Begin Shading
-	      if (index.use_shade) comprehensive = true;
+	      if (index.use_shade) {
+          comprehensive = true;
+        }
 	      // End Shading
 	      doStrandSpecificity(u, mp.opt.strand, v1, v2, comprehensive);
 	    }
@@ -1226,8 +1244,7 @@ void ReadProcessor::processBuffer() {
 	            flengoal--;
 	          }    			
 	        }
-	        if (findFragmentLength && mp.opt.unmapped)
-	        {
+	        if (findFragmentLength && mp.opt.unmapped) {
 	          unmapped_list.push_back(unmapped_r); 	    
 	        }
 	      }
@@ -1296,7 +1313,9 @@ BUSProcessor::BUSProcessor(/*const*/ KmerIndex& index, const ProgramOptions& opt
    buffer = new char[bufsize];
    seqs.reserve(bufsize/50);
    newEcs.reserve(1000);
-   if (opt.unmapped) unmapped_list.reserve(seqs.size()); 
+   if (opt.unmapped) {
+    unmapped_list.reserve(seqs.size()); 
+   }
    bv.reserve(1000);
    counts.reserve((int) (tc.counts.size() * 1.25));
    memset(&bc_len[0],0,sizeof(bc_len));
@@ -1361,10 +1380,15 @@ void BUSProcessor::operator()() {
       std::lock_guard<std::mutex> lock(mp.parallel_bus_reader_locks[SRindex]);
       if (mp.FSRs[SRindex].empty()) {
         parallel_bus_read_empty.emplace(id);
-        if (parallel_bus_read_empty.size() == nt) return;
+        if (parallel_bus_read_empty.size() == nt) {
+          return;
+        }
         for (int i = 0; i < nt; i++) {
           int j = initial_id+i;
-          if (j > end_id) j = start_id+i-(end_id-initial_id+1);
+          if (j > end_id) {
+            j = start_id+i-(end_id-initial_id+1);
+          }
+
           if (!parallel_bus_read_empty.count(j)) {
             id = j;
             break;
@@ -1429,7 +1453,9 @@ void BUSProcessor::processBuffer() {
   const BUSOptions& busopt = mp.opt.busOptions;
   bool no_technology = mp.opt.technology.empty();
   bool bulk_like = (mp.opt.batch_mode && no_technology) || busopt.umi[0].fileno == -1; // Treat like bulk: no UMI
-  if (busopt.keep_fastq_comments) bulk_like = false; // UMI is actually in FASTQ header
+  if (busopt.keep_fastq_comments) {
+    bulk_like = false; // UMI is actually in FASTQ header
+  }
 
   auto &tcount = mp.tlencount;
   if (mp.opt.batch_mode) {
@@ -1765,9 +1791,13 @@ void BUSProcessor::processBuffer() {
       
       if (doStrandSpecificityIfPossible && mp.opt.strand_specific && !u.isEmpty()) { // Strand-specificity
         bool comprehensive = false;
-        if (mp.opt.do_union || mp.opt.no_jump) comprehensive = true;
+        if (mp.opt.do_union || mp.opt.no_jump) {
+          comprehensive = true;
+        }
         // Begin Shading
-        if (index.use_shade) comprehensive = true;
+        if (index.use_shade) {
+          comprehensive = true;
+        }
         // End Shading
         doStrandSpecificity(u, mp.opt.strand, v, v2, comprehensive);
       }
@@ -3260,7 +3290,9 @@ bool FastqSequenceReader::fetchSequences(char *buf, const int limit, std::vector
   read_id = readbatch_id; // copy now because we are inside a lock
   seqs.clear();
   umis.clear();
-  if (comments) full = true; // Auto-set to full if comments is true
+  if (comments) {
+    full = true; // Auto-set to full if comments is true
+  }
   if (full) {
     names.clear();
     quals.clear();
@@ -3469,7 +3501,9 @@ bool BamSequenceReader::fetchSequences(char *buf, const int limit, std::vector<s
 
           pi = buf + bufpos;
           int len = (l_seq + 1) / 2;
-          if (l_seq % 2) --len;
+          if (l_seq % 2) {
+            --len;
+          }
           int j = 0;
           for (int i = 0; i < len; ++i, ++eseq) {
             buf[bufpos++] = seq_enc[*eseq >> 4];

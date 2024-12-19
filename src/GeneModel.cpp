@@ -379,10 +379,10 @@ int Transcriptome::addGTFLine(const std::string &line, const KmerIndex& index, b
       if (key == "gene_name") {
         keycount++;
         gmodel.commonName = std::move(value);
-      } else if (key == "gene_id")
-
-      if (keycount == 3) {
-        break;
+      } else if (key == "gene_id") {
+        if (keycount == 3) {
+          break;
+        }
       }
     } else {
       if (key == "transcript_id") {

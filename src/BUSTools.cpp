@@ -19,7 +19,9 @@ size_t writeBUSData(std::ofstream &out, const std::vector<BUSData> &bv, MinColle
     if (b.ec != -1) { // maybe keep non-mapping reads ?!?
       out.write((char*)(&b), sizeof(b));
       ++total;
-      if (tc != nullptr) ++((*tc).counts[b.ec]);
+      if (tc != nullptr) {
+        ++(tc->counts[b.ec]);
+      }
     }
   }
   return total;

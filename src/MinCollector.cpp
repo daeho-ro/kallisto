@@ -191,8 +191,12 @@ int MinCollector::intersectKmers(std::vector<std::pair<const_UnitigMap<Node>, in
       includeDList(u1, u2, index.onlist_sequences);
     }
     // Begin Shading
-    if (index.use_shade) u1 = u1 - index.shade_sequences;
-    if (index.use_shade) u2 = u2 - index.shade_sequences;
+    if (index.use_shade) {
+      u1 = u1 - index.shade_sequences;
+    }
+    if (index.use_shade) {
+      u2 = u2 - index.shade_sequences;
+    }
     // End Shading
     r = u1 & u2;
   }
@@ -209,7 +213,9 @@ int MinCollector::intersectKmers(std::vector<std::pair<const_UnitigMap<Node>, in
     Roaring r_shade_final;
     for (auto shade : r_shade) { // Make sure the shades correspond to the targets in the intersection
       auto color = index.shadeToColorTranscriptMap[shade];
-      if (r.contains(color)) r_shade_final.add(shade);
+      if (r.contains(color)) {
+        r_shade_final.add(shade);
+      }
     }
     r |= r_shade_final; // Add the shades to the equivalence class
   }
@@ -440,7 +446,9 @@ Roaring MinCollector::intersectECs(std::vector<std::pair<const_UnitigMap<Node>, 
   
   r = v[0].first.getData()->ec[v[0].first.dist].getIndices();
   // Begin Shading
-  if (index.use_shade) r = r - index.shade_sequences;
+  if (index.use_shade) {
+    r = r - index.shade_sequences;
+  }
   // End Shading
   bool found_nonempty = !r.isEmpty();
   Roaring lastEC = r;
@@ -452,7 +460,9 @@ Roaring MinCollector::intersectECs(std::vector<std::pair<const_UnitigMap<Node>, 
     if (!found_nonempty) {
       r = v[i].first.getData()->ec[v[i].first.dist].getIndices();
       // Begin Shading
-      if (index.use_shade) r = r - index.shade_sequences;
+      if (index.use_shade) { 
+        r = r - index.shade_sequences;
+      }
       // End Shading
       found_nonempty = !r.isEmpty();
     }
@@ -462,7 +472,9 @@ Roaring MinCollector::intersectECs(std::vector<std::pair<const_UnitigMap<Node>, 
 
       ec = v[i].first.getData()->ec[v[i].first.dist].getIndices();
       // Begin Shading
-      if (index.use_shade) ec = ec - index.shade_sequences;
+      if (index.use_shade) {
+        ec = ec - index.shade_sequences;
+      }
       // End Shading
 
       // Don't intersect empty EC (because of thresholding)

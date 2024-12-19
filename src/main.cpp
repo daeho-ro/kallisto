@@ -196,7 +196,9 @@ void ParseOptionsInspect(int argc, char **argv, ProgramOptions& opt) {
     }
     case 't': {
       stringstream(optarg) >> opt.threads;
-      if (opt.threads <= 0) opt.threads = 1;
+      if (opt.threads <= 0) {
+        opt.threads = 1;
+      }
       break;
     }
     case 'f': {
@@ -1284,7 +1286,9 @@ bool CheckOptionsBus(ProgramOptions& opt) {
     busopt.threshold = opt.threshold; 
     busopt.paired = false;
     busopt.keep_fastq_comments = false;
-    if (opt.bam) busopt.nfiles = 1; // Note: only 10xV2 has been tested
+    if (opt.bam) {
+      busopt.nfiles = 1; // Note: only 10xV2 has been tested
+    }
     if (opt.technology == "10XV2") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1,0,0)); // second file, entire string
@@ -1440,7 +1444,9 @@ bool CheckOptionsBus(ProgramOptions& opt) {
         ret = false;
       }
     }
-    if (opt.bam) busopt.nfiles = 1; // Make sure it's still one file for BAM
+    if (opt.bam) {
+      busopt.nfiles = 1; // Make sure it's still one file for BAM
+    }
     if (nfiles_per_batch != 0 && nfiles_per_batch != busopt.nfiles) {
       cerr << "Wrong number of files per batch for technology: " << opt.technology << endl;
     }
@@ -2318,8 +2324,11 @@ int main(int argc, char *argv[]) {
 
         std::ofstream out;
         out.open(opt.index, std::ios::out | std::ios::binary);
-        if (opt.distinguish) index.BuildDistinguishingGraph(opt, out);
-        else index.BuildTranscripts(opt, out);
+        if (opt.distinguish) {
+          index.BuildDistinguishingGraph(opt, out);
+        } else {
+           index.BuildTranscripts(opt, out);
+        }
         index.write(out, opt.threads);
         rmdir(opt.tmp_dir.c_str()); // Remove temp directory if non-empty
       }
@@ -3021,7 +3030,9 @@ int main(int argc, char *argv[]) {
           }
 
           EMAlgorithm em(collection.counts, index, collection, fl_means, opt);
-          if (opt.priors != "") em.set_priors(priors);
+          if (opt.priors != "") {
+            em.set_priors(priors);
+          }
           em.run(10000, 50, false, false);
 
           if (isMatrixFile) { // Update abundances matrix
