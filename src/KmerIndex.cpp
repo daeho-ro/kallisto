@@ -2297,10 +2297,14 @@ double KmerIndex::match_long(const char* s, int l,
   return unmapped_ratio;
 }
 
-std::pair<int, bool> KmerIndex::findPosition(int tr, Kmer km, int p) const {
+std::pair<int, bool> KmerIndex::findPosition(int tr, Kmer km, int p, const char* seq) const {
   const_UnitigMap<Node> um = dbg.find(km);
   if (!um.isEmpty) {
-    auto a = findPositions(tr, km, um, p);
+    bool ecfound = true;
+    auto a = findPositions(tr, km, um, ecfound, p);
+    if (!ecfound) {
+      a = findPositions(tr, seq);
+    }
     if (a.size() > 0) {
       return a[0];
     } else {
@@ -2487,14 +2491,56 @@ std::pair<int, bool> KmerIndex::mapTranscriptPosition(int tr, uint32_t rawpos,
   */
 };
 
-// use:  (pos,sense) = index.findPosition(tr,km,val,p)
+
+
+std::vector<std::pair<int, bool>> KmerIndex::findPositions(int tr, const char* seq) const {
+
+  KmerIterator kit(seq);
+  KmerIterator kit_end;
+  std::vector<std::pair<int, bool>> ret;
+  int lastumid = -1;
+
+  // for every kmer in the read
+  for (; kit != kit_end; ++kit) {
+    // find the kmer in the dbg
+    auto um = dbg.find(kit->first);
+    if (um.isEmpty) {
+      continue;
+    }
+    // if the kmer is not in the dbg, skip it
+    if (um.getData()->id == -1) {
+      continue;
+    }
+    // if the kmer is the same as the unsuccessful last kmer, skip it
+    if (um.getData()->id == lastumid) {
+      continue;
+    }
+    bool ecfound = true;
+    // find the positions of the kmer in the transcript
+    auto a = findPositions(tr, kit->first, um, ecfound, kit->second);
+    // if the kmer is found in the transcript, add the positions to the result
+    if (ecfound) {
+      ret.insert(ret.end(), a.begin(), a.end());
+      return ret;
+    } else {
+      // if the kmer is not found in the transcript, update the last umid
+      lastumid = um.getData()->id;
+    }
+  }
+  return ret;
+}
+
+// use:  (pos,sense) = index.findPosition(tr,km,val,p,ecfound)
 // pre:  index.kmap[km] == val,
 //       km is the p-th k-mer of a read
 //       val.contig maps to tr
-// post: km is found in position pos (1-based) on the sense/!sense strand of tr
+// post: ecfound && km is found in position pos (1-based) on the sense/!sense strand of tr
+//       or ecfound == false and the um does not map to the tr
+
 std::vector<std::pair<int, bool>> KmerIndex::findPositions(int tr, Kmer km,
                                                            const const_UnitigMap<Node>& um,
-                                                           int p) const {
+                                                           bool &ecfound, int p) const {
+  ecfound = true;
   bool csense = um.strand;
   int trpos = -1;
   uint32_t bitmask = 0x7FFFFFFF;
@@ -2511,6 +2557,10 @@ std::vector<std::pair<int, bool>> KmerIndex::findPositions(int tr, Kmer km,
       um.dist -
       mc.first;  // for mosaic ECs, need to start from beginning of current block, not zero
 
+  if (!v_ec.contains(tr)) {
+    ecfound = false;
+    return {};
+  }
   auto rawpositions = v_ec.get(tr, false);
   std::vector<std::pair<int, bool>> ret;
   for (const auto rawpos : rawpositions) {
@@ -2579,7 +2629,8 @@ void KmerIndex::loadTranscriptSequences() const {
       const Roaring& trs = val.getIndices();
       for (const auto& tr : trs) {
         auto um = dbg.find(km);
-        for (const auto& p : findPositions(tr, km, um, 0)) {
+        bool ecfound = true;
+        for (const auto& p : findPositions(tr, km, um, ecfound, 0)) {
           if (p.second) {
             assert(target_seqs[tr].size() == target_lens_[tr]);
             assert(p.first - 1 >= 0);

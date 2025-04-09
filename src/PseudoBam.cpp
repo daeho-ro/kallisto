@@ -192,7 +192,7 @@ void outputPseudoBam(const KmerIndex &index, const Roaring& u,
         std::pair<int, bool> x1 {-1,true};
         std::pair<int, bool> x2 {-1,true};
         if (p1 != -1) {
-          x1 = index.findPosition(tr, km1, p1);
+          x1 = index.findPosition(tr, km1, p1, s1);
           if (p2 == -1) {
             x2 = {x1.first,!x1.second};
           }
@@ -208,7 +208,7 @@ void outputPseudoBam(const KmerIndex &index, const Roaring& u,
           f1 += 0x100; // secondary alignment
         }
         if (p2 != -1) {
-          x2 = index.findPosition(tr, km2 ,  p2);
+          x2 = index.findPosition(tr, km2 ,  p2, s2);
           if (p1 == -1) {
             x1 = {x2.first, !x2.second};
           }
@@ -247,7 +247,7 @@ void outputPseudoBam(const KmerIndex &index, const Roaring& u,
         std::pair<int, bool> x1 {-1,true};
         std::pair<int, bool> x2 {-1,true};
         if (p1 != -1) {
-          x1 = index.findPosition(tr, km1, p1);
+          x1 = index.findPosition(tr, km1, p1, s1);
           if (p2 == -1) {
             x2 = {x1.first,!x1.second};
           }
@@ -256,7 +256,7 @@ void outputPseudoBam(const KmerIndex &index, const Roaring& u,
           }
         }
         if (p2 != -1) {
-          x2 = index.findPosition(tr, km2, p2);
+          x2 = index.findPosition(tr, km2, p2, s2);
           if (p1 == -1) {
             x1 = {x2.first, !x2.second};
           }
@@ -313,7 +313,7 @@ void outputPseudoBam(const KmerIndex &index, const Roaring& u,
       bool firstTr = true;
       for (auto tr : u) {
         int f1 = 0;
-        auto x1 = index.findPosition(tr, km1, p1);
+        auto x1 = index.findPosition(tr, km1, p1, s1);
 
         if (!x1.second) {
           f1 += 0x10;

@@ -1094,7 +1094,7 @@ void ReadProcessor::processBuffer() {
     double unmapped_r = 0;
     if (mp.opt.long_read) {
       unmapped_r = index.match_long(s1, l1, v1, !paired);
-      std::cerr << unmapped_r << "," << std::endl;
+      // std::cerr << unmapped_r << "," << std::endl;
       novel = (unmapped_r > mp.opt.threshold * l1);
     } else {
       index.match(s1, l1, v1, !paired);
@@ -1183,7 +1183,9 @@ void ReadProcessor::processBuffer() {
 
         // for each transcript in the pseudoalignment
         for (auto tr : u) {
-          auto positions = index.findPositions(tr, km, um, p);
+          bool ecfound = true;
+          auto positions = index.findPositions(tr, km, um, ecfound, p);
+
           // if the fragment is within bounds for this transcript, keep it
           for (const auto &x : positions) {
             if (x.second && x.first + fl <= (int)index.target_lens_[tr]) {
@@ -1297,6 +1299,15 @@ void ReadProcessor::processBuffer() {
 
     } else {  // now address reads that are considered novel and need to be written to novel fastq
               // and processed later.
+
+      if (mp.opt.pseudobam) {
+        PseudoAlignmentInfo info;
+        info.id = (paired) ? (i / 2) : i;  // read id
+        info.paired = paired;
+        
+        pseudobatch.aln.push_back(std::move(info));
+      }
+
       std::stringstream ss;
       if (u.isEmpty()) {
         std::string s(s1);
@@ -2326,14 +2337,14 @@ void AlnProcessor::processBufferTrans() {
           std::pair<int, bool> pos1, pos2;
 
           if (!pi.r1empty) {
-            pos1 = index.findPosition(t, km1, pi.k1pos);
+            pos1 = index.findPosition(t, km1, pi.k1pos, seqs[si1].first);
           } else {
             pos1 = {std::numeric_limits<int>::min(), true};
           }
 
           if (paired) {
             if (!pi.r2empty) {
-              pos2 = index.findPosition(t, km2, pi.k2pos);
+              pos2 = index.findPosition(t, km2, pi.k2pos, seqs[si2].first);
             } else {
               pos2 = {std::numeric_limits<int>::min(),
                       true};  // use true so we don't reverse complement it
@@ -2865,7 +2876,13 @@ void AlnProcessor::processBufferGenome() {
           };
 
           if (!pi.r1empty) {
-            p1v = index.findPositions(t, km1, val1, pi.k1pos);
+            bool ecfound = true;
+            p1v = index.findPositions(t, km1, val1, ecfound, pi.k1pos);
+            if (!ecfound) {
+              // need to check the read exhaustively
+              p1v = index.findPositions(t, seqs[si1].first);
+            }
+            
             if (p1v.size() == 1) {
               pos1 = p1v[0];
             } else if (p1v.size() > 1) {
@@ -2884,7 +2901,12 @@ void AlnProcessor::processBufferGenome() {
 
           if (paired) {
             if (!pi.r2empty) {
-              p2v = index.findPositions(t, km2, val2, pi.k2pos);
+              bool ecfound = true;
+              p2v = index.findPositions(t, km2, val2, ecfound, pi.k2pos);
+              if (!ecfound) {
+                p2v = index.findPositions(t, seqs[si2].first);
+              }
+
               if (p2v.size() == 1) {
                 pos2 = p2v[0];
               } else if (p2v.size() > 1) {

@@ -357,7 +357,8 @@ void InspectIndex(const KmerIndex& index, const ProgramOptions& opt) {
                   << " at position " << pos << " not found in the index." << std::endl;
         exit(1);
       }      
-      auto indexPositions = index.findPositions(tr, km, um);
+      bool ecfound = true;
+      auto indexPositions = index.findPositions(tr, km, um, ecfound);
       bool positionMatched = false;
       for (const auto& indexPos : indexPositions) {
         // check if any of the index positions match the position in the sequence
@@ -386,7 +387,8 @@ void InspectIndex(const KmerIndex& index, const ProgramOptions& opt) {
         exit(1);
       }
       indexPositions.clear();
-      indexPositions = index.findPositions(tr, tw, um_tw);
+      
+      indexPositions = index.findPositions(tr, tw, um_tw, ecfound);
       positionMatched = false;
       for (const auto& indexPos : indexPositions) {
         if (indexPos.first == pos+k && !indexPos.second) {

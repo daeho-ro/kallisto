@@ -121,8 +121,10 @@ struct KmerIndex {
 
   // positional information
   std::pair<int,bool> mapTranscriptPosition(int tr, uint32_t rawpos, const const_UnitigMap<Node>& um, int p, bool multipos) const;
-  std::vector<std::pair<int,bool>> findPositions(int tr, Kmer km, const const_UnitigMap<Node>& um, int p = 0) const;
-  std::pair<int,bool> findPosition(int tr, Kmer km, int p) const;
+  std::vector<std::pair<int,bool>> findPositions(int tr, Kmer km, const const_UnitigMap<Node>& um, bool &ecfound, int p = 0) const;
+  std::vector<std::pair<int,bool>> findPositions(int tr, const char* seq) const;
+  
+  std::pair<int,bool> findPosition(int tr, Kmer km, int p, const char* seq) const;
   
 
   int k; // k-mer size used
