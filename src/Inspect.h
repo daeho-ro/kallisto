@@ -125,7 +125,7 @@ void InspectIndex(const KmerIndex& index, const ProgramOptions& opt) {
   int k = index.k;
   std::cout << "[inspect] Index version number = " << index.INDEX_VERSION << std::endl;
   //std::cout << "#[inspect] k = " << index.k << std::endl;;
-  //std::cout << "#[inspect] number of targets = " << index.num_trans << std::endl;
+  //std::cout << "#[inspect] number of targets = " << index.target_names_.size() << std::endl;
 
   std::cout << "[inspect] number of unitigs = " << index.dbg.size() << std::endl;
   std::cout << "[inspect] minimizer length = " << index.dbg.getG() << std::endl;

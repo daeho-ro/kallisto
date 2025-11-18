@@ -3090,7 +3090,7 @@ int main(int argc, char *argv[]) {
         std::string gene_abtpmfilename = prefix + ".abundance.gene.tpm.mtx";
         std::string fldfilename = prefix + ".fld.tsv";
 
-        size_t num_trans = index.num_trans;
+        size_t num_trans = index.target_names_.size();
 
         const bool calcEffLen = !opt.fldFile.empty() || opt.fld != 0.0;
         if (calcEffLen && !opt.fldFile.empty() &&

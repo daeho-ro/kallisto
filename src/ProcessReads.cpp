@@ -699,7 +699,7 @@ void MasterProcessor::processAln(const EMAlgorithm &em, bool useEM = true) {
   breakpoints.assign(numSortFiles - 1, (((uint64_t)-1) << 32));
   std::vector<std::vector<std::pair<uint32_t, uint32_t>>> chrWeights(model.chr.size());
   for (const auto &t : model.transcripts) {
-    if (t.id >= 0 && t.id < index.num_trans) {
+    if (t.id >= 0 && t.id < em.alpha_.size()) {
       // valid id
       if (t.chr != -1 && t.stop > 0) {
         chrWeights[t.chr].push_back({t.stop, ((int32_t)(em.alpha_[t.id] + 1))});

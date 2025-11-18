@@ -2601,7 +2601,7 @@ void KmerIndex::loadTranscriptSequences() const {
 
   auto& target_seqs = const_cast<std::vector<std::string>&>(target_seqs_);
   target_seqs.clear();
-  for (int i = 0; i < num_trans; i++) {
+  for (int i = 0; i < target_lens_.size(); i++) {
     int len = target_lens_[i];
     target_seqs.emplace_back(len, ' ');
   }

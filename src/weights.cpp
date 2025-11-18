@@ -120,7 +120,7 @@ std::vector<double> update_eff_lens(
   index.loadTranscriptSequences();
 
 
-  for (int i = 0; i < index.num_trans; i++) {
+  for (int i = 0; i < index.target_lens_.size(); i++) {
     if ((int)index.target_lens_[i] < means[i]) {
       // this should never happen.. but I'll sleep better at night with this
       // condition -HP
@@ -163,9 +163,9 @@ std::vector<double> update_eff_lens(
     biasAlphaNorm += dbias5[i];
   }
 
-  std::vector<double> biaslens(index.num_trans);
+  std::vector<double> biaslens(index.target_lens_.size());
 
-  for (int i = 0; i < index.num_trans; i++) {
+  for (int i = 0; i < index.target_lens_.size(); i++) {
     double efflen = 0.0;
     if ((int)index.target_lens_[i] >= means[i] && alpha[i] >= MIN_ALPHA) {
 

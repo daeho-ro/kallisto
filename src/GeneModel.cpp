@@ -158,7 +158,7 @@ void Transcriptome::loadTranscriptome(const KmerIndex& index, std::istream &in, 
   std::string gtype, ttype;
   std::string gene_id, tr_id, chr_id;
 
-  for (int i = 0; i < index.num_trans; i++) {
+  for (int i = 0; i < index.target_names_.size(); i++) {
     TranscriptModel tr;
     tr.id = i;
     tr.chr = -1;
@@ -250,7 +250,7 @@ void Transcriptome::loadTranscriptome(const KmerIndex& index, std::istream &in, 
   }
 
   int tr_bad = 0;
-  for (int i = 0; i < index.num_trans; i++) {
+  for (int i = 0; i < index.target_names_.size(); i++) {
     const auto& tr = transcripts[i];
     if (tr.chr == -1) {
       tr_bad++;
@@ -258,7 +258,7 @@ void Transcriptome::loadTranscriptome(const KmerIndex& index, std::istream &in, 
   }
   if (tr_bad > 0) {
     std::cerr << "Warning: there were " << tr_bad << " transcripts out of "
-              << index.num_trans << " that are missing in the GTF file " << std::endl;
+              << index.target_names_.size() << " that are missing in the GTF file " << std::endl;
   }
 
 }
@@ -488,7 +488,7 @@ int Transcriptome::addGTFLine(const std::string &line, const KmerIndex& index, b
 
 void Transcriptome::parseGTF(const std::string &gtf_fn, const KmerIndex& index, const ProgramOptions& options, bool guessChromosomes) {
 
-  for (int i = 0; i < index.num_trans; i++) {
+  for (int i = 0; i < index.target_names_.size(); i++) {
     TranscriptModel tr;
     tr.id = i;
     tr.chr = -1;
@@ -578,7 +578,7 @@ void Transcriptome::parseGTF(const std::string &gtf_fn, const KmerIndex& index, 
 }
 
 void Transcriptome::parseGeneMap(const std::string &genemap_fn, const KmerIndex& index, const ProgramOptions& options) {
-  for (int i = 0; i < index.num_trans; i++) {
+  for (int i = 0; i < index.target_names_.size(); i++) {
     TranscriptModel tr;
     tr.id = i;
     tr.chr = -1;

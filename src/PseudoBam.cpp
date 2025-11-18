@@ -6,16 +6,16 @@
 
 bam_hdr_t* createPseudoBamHeaderTrans(const KmerIndex& index)  {
   bam_hdr_t *h = bam_hdr_init();
-  h->n_targets = index.num_trans;
+  h->n_targets = index.target_names_.size();
   //todo include program parameters in string
   std::string text = "@HD\tVN:1.0\n@PG\tID:kallisto\tPN:kallisto\tVN:";
   text += KALLISTO_VERSION;
   text += "\n";
   h->text = strdup(text.c_str());
   h->l_text = (uint32_t) strlen(h->text);
-  h->target_len = (uint32_t *) calloc(index.num_trans, sizeof(uint32_t));
-  h->target_name = (char**) calloc(index.num_trans, sizeof(char*));
-  for (int i = 0; i < index.num_trans; i++) {
+  h->target_len = (uint32_t *) calloc(index.target_lens_.size(), sizeof(uint32_t));
+  h->target_name = (char**) calloc(index.target_names_.size(), sizeof(char*));
+  for (int i = 0; i < index.target_names_.size(); i++) {
     h->target_len[i] = (uint32_t) index.target_lens_[i];
     h->target_name[i] = strdup(index.target_names_[i].c_str());
   }
