@@ -523,7 +523,9 @@ void ListSingleCellTechnologies() {
        << "10xv1            10x version 1 chemistry" << std::endl
        << "10xv2            10x version 2 chemistry" << std::endl
        << "10xv3            10x version 3 chemistry" << std::endl
+       << "10xv4            10x version 4 chemistry" << std::endl
        << "Bulk             Bulk RNA-seq" << std::endl
+       << "ParseV3          Parse Evercode V3" << std::endl
        << "SmartSeq2        Smart-seq2 (multiplexed)" << std::endl
        << "BDWTA            BD Rhapsody WTA" << std::endl
        << "CELSeq           CEL-Seq" << std::endl
@@ -532,6 +534,8 @@ void ListSingleCellTechnologies() {
        << "inDropsv1        inDrops version 1 chemistry" << std::endl
        << "inDropsv2        inDrops version 2 chemistry" << std::endl
        << "inDropsv3        inDrops version 3 chemistry" << std::endl
+       << "MATQSEQ          MATQ-SEQ" << std::endl
+       << "PETRISEQ         PETRI-SEQ" << std::endl
        << "SCRBSeq          SCRB-Seq" << std::endl
        << "SmartSeq3        Smart-seq3" << std::endl
        << "SPLiT-seq        SPLiT-seq" << std::endl
@@ -1313,6 +1317,25 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.umi.push_back(BUSOptionSubstr(0, 16, 28));
       busopt.bc.push_back(BUSOptionSubstr(0, 0, 16));
       strand = ProgramOptions::StrandType::FR;
+    } else if (opt.technology == "Parsev3") {
+      busopt.nfiles = 2;
+      busopt.seq.push_back(BUSOptionSubstr(0, 0, 0));
+      busopt.bc.push_back(BUSOptionSubstr(1, 10, 18));
+      busopt.bc.push_back(BUSOptionSubstr(1, 30, 38));
+      busopt.bc.push_back(BUSOptionSubstr(1, 50, 58));
+      busopt.umi.push_back(BUSOptionSubstr(1, 0, 10));
+      strand = ProgramOptions::StrandType::FR;
+    } else if (opt.technology == "MATQSEQ") {
+      busopt.nfiles = 1;
+      busopt.bc.push_back(BUSOptionSubstr(0, 0, 8));
+      busopt.seq.push_back(BUSOptionSubstr(0, 8, 0));
+    } else if (opt.technology == "PETRISEQ") {
+      busopt.nfiles = 2;
+      busopt.seq.push_back(BUSOptionSubstr(1, 0, 17));
+      busopt.bc.push_back(BUSOptionSubstr(0, 7, 14));
+      busopt.bc.push_back(BUSOptionSubstr(0, 29, 36));
+      busopt.bc.push_back(BUSOptionSubstr(0, 50, 58));
+      busopt.umi.push_back(BUSOptionSubstr(0, 0, 7));    
     } else if (opt.technology == "VISIUM") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 0));
