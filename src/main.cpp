@@ -1317,7 +1317,7 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.umi.push_back(BUSOptionSubstr(0, 16, 28));
       busopt.bc.push_back(BUSOptionSubstr(0, 0, 16));
       strand = ProgramOptions::StrandType::FR;
-    } else if (opt.technology == "Parsev3") {
+    } else if (opt.technology == "PARSEV3") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(0, 0, 0));
       busopt.bc.push_back(BUSOptionSubstr(1, 10, 18));
@@ -1329,6 +1329,7 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.nfiles = 1;
       busopt.bc.push_back(BUSOptionSubstr(0, 0, 8));
       busopt.seq.push_back(BUSOptionSubstr(0, 8, 0));
+      busopt.umi.push_back(BUSOptionSubstr(-1, -1, -1));
     } else if (opt.technology == "PETRISEQ") {
       busopt.nfiles = 2;
       busopt.seq.push_back(BUSOptionSubstr(1, 0, 17));
@@ -1399,7 +1400,7 @@ bool CheckOptionsBus(ProgramOptions &opt) {
       busopt.bc.push_back(BUSOptionSubstr(1, 48, 56));
       busopt.bc.push_back(BUSOptionSubstr(1, 78, 86));
       strand = ProgramOptions::StrandType::FR;
-    } else if (opt.technology == "STORM-seq") {
+    } else if (opt.technology == "STORM-SEQ") {
       busopt.nfiles = 2;
       busopt.bc.push_back(BUSOptionSubstr(-1, -1, -1));
       busopt.umi.push_back(BUSOptionSubstr(1, 0, 8));
