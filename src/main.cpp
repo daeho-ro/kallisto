@@ -2245,6 +2245,13 @@ void usageBus() {
        << "    --inleaved                Specifies that input is an interleaved FASTQ file" << std::endl
        << "    --batch-barcodes          Records both batch and extracted barcode in BUS file"
        << std::endl
+       #ifndef NO_HTSLIB
+       << "    --genomebam               Project pseudoalignments to genome sorted BAM file" << std::endl
+       << "-g, --gtf                     GTF file for transcriptome information" << std::endl
+       << "                              (required for --genomebam)" << std::endl
+       << "-c, --chromosomes             Tab separated file with chromosome names and lengths" << std::endl
+       << "                              (optional for --genomebam, but recommended)" << std::endl
+       #endif // NO_HTSLIB
        << "    --verbose                 Print out progress information every 1M proccessed reads"
        << std::endl;
 }
@@ -2335,6 +2342,14 @@ void usageEM(bool valid_input = true) {
        << "                              prevent zero valued priors. Supplied in the same order"
        << std::endl
        << "                              as the transcripts in the transcriptome" << std::endl
+       #ifndef NO_HTSLIB
+       << "    --pseudobam               Save pseudoalignments to transcriptome to BAM file" << std::endl
+       << "    --genomebam               Project pseudoalignments to genome sorted BAM file" << std::endl
+       << "-g, --gtf                     GTF file for transcriptome information" << std::endl
+       << "                              (required for --genomebam)" << std::endl
+       << "-c, --chromosomes             Tab separated file with chromosome names and lengths" << std::endl
+       << "                              (optional for --genomebam, but recommended)" << std::endl
+       #endif // NO_HTSLIB
        << "-t, --threads=INT             Number of threads to use (default: 1)" << std::endl
        << "    --verbose                 Print out progress information every 1M proccessed reads"
        << std::endl;
@@ -2717,7 +2732,7 @@ int main(int argc, char *argv[]) {
           }
           flensout_f << "\n";
           flensout_f.close();
-          std::cerr << "Finished fragment length write out line 2487" << std::endl;
+
           if (opt.unmapped) {
             std::ofstream um_f((opt.output + "/unmapped_ratio.txt"));
             std::vector<double> unmapped_l = collection.unmapped_list;
